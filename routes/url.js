@@ -1,6 +1,5 @@
 const express=require("express");
-const handleURL = require("../controller/url");
-const analytics = require("../controller/url");
+const {handleURL,analytics} = require("../controller/url");
 const router=express.Router();
 
 router.post('/',handleURL);

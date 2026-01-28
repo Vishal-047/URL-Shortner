@@ -2,11 +2,25 @@ const express=require("express");
 const routeURL = require("./routes/url");
 const connection=require("./connection")
 const app=express();
+const path=require("path");
 const PORT=8001;
-const URL =require("./model/url")
+const URL =require("./model/url");
 app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 
+const staticRoute=require("./routes/staticRouter");
 app.use('/url',routeURL)
+app.use('/',staticRoute);
+
+app.set("view engine","ejs");
+app.set("views", path.resolve("./views"));
+
+// app.get('/test',async(req,res)=>{
+//     const allURLs=await URL.find({});
+//     return res.render('home',{
+//         urls:allURLs,
+//     });
+// })
 
 app.get('/:shortId',async (req,res)=>{
     const shortId=req.params.shortId;
@@ -28,5 +42,5 @@ app.get('/:shortId',async (req,res)=>{
 app.listen(PORT, ()=>console.log(`Server started on Port: ${PORT}`));
 
 connection('mongodb://127.0.0.1:27017/short-url')
-.then(console.log("Server started"))
+.then(()=>console.log("MongoDB connected"))
 .catch(err=>console.log("Error occured: ",err));

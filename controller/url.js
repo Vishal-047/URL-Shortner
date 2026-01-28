@@ -11,9 +11,11 @@ async function handleURL(req,res){
         redirectedURL:body.url,
         visitHistory:[],
     });
-    return res.json({id:shortId,
-        Shorten_URL:`http://localhost:8001/${shortId}`,
-    });
+    const allURLs=await URL.find({});
+    return res.render("home",{
+        id:shortId,
+        urls:allURLs,
+    })
 }
 
 async function analytics(req,res) {
@@ -24,5 +26,4 @@ async function analytics(req,res) {
     })
 }
 
-module.exports=handleURL;
-module.exports=analytics;
+module.exports={handleURL,analytics};
