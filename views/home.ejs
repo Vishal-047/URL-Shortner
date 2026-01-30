@@ -6,6 +6,7 @@
     <title>Home page</title>
 </head>
 <body>
+    
     <div style="text-align: center;">
         <h1>URL SHORTNER</h1>
         <form method="post" action="/url">
@@ -17,26 +18,31 @@
                 <p>The new generated URL is: http://localhost:8001/<%= id %></p>
         <% } %>
     </div>
-    <div>
-        <% if (locals.urls) { %>
-            <table>
+    <div style="margin: 20px auto; max-width: 800px;">
+        <% if (locals.urls && urls.length > 0) { %>
+            <h2 style="text-align: center;">All Shortened URLs</h2>
+            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead>
-                <th>S.No.</th>
-                <th>ShortId</th>
-                <th>Redirect</th>
-                <th>Clicks</th>
+                    <tr style="background-color: #f0f0f0;">
+                        <th>S.No.</th>
+                        <th>ShortId</th>
+                        <th>Redirect</th>
+                        <th>Clicks</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <% urls.forEach((url,index) => { %>
                         <tr>
-                     <td><%= index+1 %></td>
-                     <td><%= url.shortId %></td>
-                     <td><%= url.redirectedURL %></td>
-                     <td><%= url.visitHistory.length %></td>
-                     </tr>
-                     <% }) %>
+                            <td><%= index+1 %></td>
+                            <td><%= url.shortId %></td>
+                            <td><%= url.redirectedURL %></td>
+                            <td><%= url.visitHistory ? url.visitHistory.length : 0 %></td>
+                        </tr>
+                    <% }) %>
                 </tbody>
             </table>
+        <% } else if (locals.urls && urls.length === 0) { %>
+            <p style="text-align: center; margin-top: 20px; color: #666;">No shortened URLs yet. Create one above!</p>
         <% } %>
     </div>
     </body>

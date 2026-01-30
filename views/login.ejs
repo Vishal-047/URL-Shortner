@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<style>
+    #login-container{
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #da9090;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    #login-container h1{
+        margin-bottom: 20px;
+        color: #0056b3;
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        font-family: Arial, sans-serif;
+        font-size: 35px;
+    }
+    #login-container form{
+        margin-top: 20px;
+    }
+    #login-container form label{
+        margin-bottom: 10px;
+    }
+    #login-container form input{
+        margin-bottom: 10px;
+    }
+    #login-container form button{
+        margin-top: 20px;
+        width: 50%;
+        border-radius: 5px;
+        background-color: #b3bbb7;
+    }
+    #login-container form button:hover{
+        background-color: #0056b3;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;    transition: background-color 0.3s ease;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+
+</style>
+<body>
+    <div id="login-container">
+        <h1>Login</h1>
+        <form action="/user/login" method="post">
+            <label>Email:</label>
+            <input type="text" placeholder="example@email.com" name="email"><br><br>
+            <label>Password:</label>
+            <input type="password" placeholder="Enter your password" name="password"><br><br>
+            <button type="submit">Login</button>
+            <% if (locals.error) { %>
+                <p style="color: red;"><%= error %></p>
+            <% } %>
+            <p>Don't have an account? <a href="/signup">Signup</a></p>
+
+        </form>
+    </div>
+</body>
+</html>
