@@ -3,7 +3,7 @@ const routeURL = require("./routes/url");
 const connection=require("./connection")
 const app=express();
 const cookieparser=require("cookie-parser")
-const { restrictUser } = require("./middleware/auth");
+const { restrictUser,checkAuth } = require("./middleware/auth");
 const path=require("path");
 const PORT=8001;
 const URL =require("./model/url");
@@ -18,9 +18,11 @@ app.set("views", path.resolve("./views"));
 app.use(express.urlencoded({extended:false}));
 app.use(cookieparser());
 
+
+
 app.use('/url',restrictUser,routeURL)
 app.use('/user',userRoute)
-app.use('/',staticRoute);
+app.use('/',checkAuth,staticRoute);
 
 // This route should be last to avoid catching other routes
 app.get('/:shortId',async (req,res)=>{

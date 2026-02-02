@@ -11,10 +11,20 @@ async function restrictUser(req,res,next) {
         return res.redirect("/login");
     }
 
-    res.user=user;
+    req.user=user;
     next();
 
 }
+
+async function checkAuth(req,res,next) {
+    const userUid=req.cookies.uid;
+    if(userUid){
+        const user=getUser(userUid);
+        req.user=user;
+    }
+    next();
+    
+}
 module.exports={
-    restrictUser
+    restrictUser,checkAuth
 }

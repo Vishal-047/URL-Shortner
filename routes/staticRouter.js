@@ -2,10 +2,12 @@ const express=require("express");
 const router=express.Router();
 const URL=require("../model/url");
 router.get('/',async (req,res)=>{
-    const allURLs=await URL.find({});
+    if(!req.user) return res.redirect('/login');
+    // Show only URLs created by this user
+    const allURLs=await URL.find({createdBy:req.user._id});
    return res.render('home',{
     urls:allURLs,
-
+    user:req.user
    });
 })
 

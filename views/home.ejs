@@ -6,7 +6,13 @@
     <title>Home page</title>
 </head>
 <body>
-    
+    <% if (locals.user) { %>
+        <div style="text-align: right; padding: 10px 20px; background-color: #f0f0f0; border-bottom: 1px solid #ddd;">
+            <span style="margin-right: 20px;"><strong>Name:</strong> <%= user.name %></span>
+            <span><strong>Email:</strong> <%= user.email %></span>
+            <a href="/user/logout" style="margin-left: 20px; color: #0056b3; text-decoration: none;">Logout</a>
+        </div>
+    <% } %>
     <div style="text-align: center;">
         <h1>URL SHORTNER</h1>
         <form method="post" action="/url">

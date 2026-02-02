@@ -38,8 +38,14 @@ async function handlelogin(req,res) {
             return res.render("login",{error:"Incorrect password"});
         }
         const sessionId=uuidv4();
-        setUser(sessionId,user);
-        res.cookie("uid",sessionId);
+        // Convert Mongoose document to plain object
+        const userObject = exuser.toObject ? exuser.toObject() : exuser;
+        setUser(sessionId,userObject);
+        res.cookie("uid",sessionId, {
+            httpOnly: true,
+            secure: false, // Set to true in production with HTTPS
+            maxAge: 1000 * 60 * 60 * 24 // 24 hours
+        });
         return res.redirect("/");
 
     } catch (error) {
@@ -49,4 +55,9 @@ async function handlelogin(req,res) {
     
 }
 
-module.exports={handleuser,handlelogin};
+async function handlelogout(req,res) {
+    res.clearCookie("uid");
+    return res.redirect("/login");
+}
+
+module.exports={handleuser,handlelogin,handlelogout};

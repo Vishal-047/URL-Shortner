@@ -19,18 +19,21 @@ async function handleURL(req,res){
         visitHistory:[],
         createdBy:req.user._id,
     });
-    const allURLs=await URL.find({});
+    // Fetch only URLs created by this user
+    const allURLs=await URL.find({createdBy:req.user._id});
     return res.render("home",{
         id:shortId,
         urls:allURLs,
+        user:req.user
     })
 }
 
 async function analytics(req,res) {
     const shortId=req.params.shortId;
-    const result=await URL.findOne({shortId});
+    // Only allow users to see analytics for their own URLs
+    const result=await URL.findOne({shortId, createdBy:req.user._id});
     if(!result){
-        return res.status(404).json({error:"Short URL not found"});
+        return res.status(404).json({error:"Short URL not found or you don't have access"});
     }
     return res.json({
         totalClicks:result.visitHistory ? result.visitHistory.length : 0,
