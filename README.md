@@ -1,14 +1,17 @@
 # URL Shortener
 
-A simple and efficient URL shortener service built with Node.js, Express.js, and MongoDB. This application allows you to shorten long URLs and track analytics including total clicks and visit history.
+A simple and efficient URL shortener service built with Node.js, Express.js, and MongoDB. This application allows users to shorten long URLs, track analytics for their own links, and manage them through a user-friendly interface. The application is secured with JWT-based authentication.
 
 ## Features
 
-- 🔗 **URL Shortening**: Convert long URLs into short, manageable links
-- 📊 **Analytics**: Track total clicks and visit history for each shortened URL
-- ⚡ **Fast & Lightweight**: Built with Express.js for optimal performance
-- 🗄️ **MongoDB Integration**: Persistent storage with MongoDB
-- 🔍 **Unique Short IDs**: Uses nanoid to generate unique 8-character short IDs
+- 🔗 **URL Shortening**: Convert long URLs into short, manageable links.
+- 🔐 **User Authentication**: Secure user accounts with JWT-based authentication (signup, login, logout).
+- 👤 **User-Specific URLs**: Users can only view and manage their own shortened URLs.
+- 📊 **Analytics**: Track total clicks and visit history for each shortened URL.
+- ⚡ **Fast & Lightweight**: Built with Express.js for optimal performance.
+- 🗄️ **MongoDB Integration**: Persistent storage with MongoDB.
+- 🔍 **Unique Short IDs**: Uses `nanoid` to generate unique 8-character short IDs.
+- 🖥️ **EJS Templating**: Server-side rendered views with EJS.
 
 ## Tech Stack
 
@@ -16,7 +19,10 @@ A simple and efficient URL shortener service built with Node.js, Express.js, and
 - **Express.js** - Web framework
 - **MongoDB** - Database
 - **Mongoose** - MongoDB object modeling
+- **EJS** - Template engine
 - **nanoid** - Unique ID generation
+- **jsonwebtoken** - For JWT-based authentication
+- **cookie-parser** - For handling cookies
 
 ## Prerequisites
 
@@ -56,13 +62,20 @@ npm start
 
 The server will start on `http://localhost:8001`
 
+## Web Routes
+
+-   `GET /`: Home page. Displays the URL shortening form and a list of the user's shortened URLs. (Requires login)
+-   `GET /signup`: Renders the signup page.
+-   `GET /login`: Renders the login page.
+-   `GET /user/logout`: Logs the user out.
+
 ## API Endpoints
 
 ### Create Short URL
 
-**POST** `/url`
+**POST** `/url` (Protected)
 
-Creates a new short URL from a long URL.
+Creates a new short URL from a long URL for the authenticated user.
 
 **Request Body:**
 ```json
@@ -72,29 +85,22 @@ Creates a new short URL from a long URL.
 ```
 
 **Response:**
-```json
-{
-  "id": "abc12345",
-  "Shorten_URL": "http://localhost:8001/abc12345"
-}
-```
+Renders the home page with the newly created short URL.
 
 ### Redirect to Original URL
 
 **GET** `/:shortId`
 
-Redirects to the original URL associated with the short ID.
+Redirects to the original URL associated with the short ID and tracks the click.
 
 **Example:**
-```
-GET http://localhost:8001/abc12345
-```
+`GET http://localhost:8001/abc12345`
 
 ### Get Analytics
 
-**GET** `/url/analytics/:shortId`
+**GET** `/url/analytics/:shortId` (Protected)
 
-Retrieves analytics data for a specific short URL.
+Retrieves analytics data for a specific short URL belonging to the authenticated user.
 
 **Response:**
 ```json
@@ -109,28 +115,83 @@ Retrieves analytics data for a specific short URL.
 }
 ```
 
+### User Authentication
+
+**POST** `/user`
+
+Registers a new user.
+
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+**Response:** Redirects to `/login`.
+
+**POST** `/user/login`
+
+Logs in a user and sets an HTTP-only cookie with a JWT.
+
+**Request Body:**
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+**Response:** Redirects to `/`.
+
 ## Project Structure
 
 ```
 urlShortner/
-├── index.js           # Main server file
-├── connection.js      # MongoDB connection handler
+├── index.js                # Main server file
+├── connection.js           # MongoDB connection handler
+├── WORKFLOW.md             # Detailed application workflow
+├── package.json            # Dependencies and scripts
+├── .gitignore              # Git ignore file
+├── middleware/
+│   └── auth.js             # Authentication middleware (JWT)
 ├── controller/
-│   └── url.js        # URL controller logic
+│   ├── url.js              # URL controller logic
+│   └── user.js             # User controller logic (signup, login)
 ├── routes/
-│   └── url.js        # URL routes
+│   ├── url.js              # URL routes
+│   ├── user.js             # User authentication routes
+│   └── staticRouter.js     # Routes for serving EJS views
 ├── model/
-│   └── url.js        # URL data model
-└── package.json      # Dependencies and scripts
+│   ├── url.js              # URL data model (Mongoose schema)
+│   └── user.js             # User data model (Mongoose schema)
+├── service/
+│   └── auth.js             # JWT service for creating and verifying tokens
+└── views/
+    ├── home.ejs            # Home page view
+    ├── login.ejs           # Login page view
+    └── signup.ejs          # Signup page view
 ```
 
 ## Database Schema
 
-The URL model includes:
+### URL Schema
+
+The URL model (`urls` collection) includes:
 - `shortId`: Unique identifier for the shortened URL
 - `redirectedURL`: Original URL to redirect to
 - `TotalClicks`: Total number of clicks
 - `visitHistory`: Array of visit timestamps
+- `createdBy`: ObjectId of the user who created the URL
+- `createdAt`: Timestamp of creation
+- `updatedAt`: Timestamp of last update
+
+### User Schema
+
+The User model (`users` collection) includes:
+- `name`: User's full name
+- `email`: User's email (unique)
+- `password`: User's password
 - `createdAt`: Timestamp of creation
 - `updatedAt`: Timestamp of last update
 
