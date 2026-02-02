@@ -37,11 +37,13 @@ async function handlelogin(req,res) {
         if(exuser.password !== password){
             return res.render("login",{error:"Incorrect password"});
         }
-        const sessionId=uuidv4();
+        // const sessionId=uuidv4();  //no need 
         // Convert Mongoose document to plain object
         const userObject = exuser.toObject ? exuser.toObject() : exuser;
-        setUser(sessionId,userObject);
-        res.cookie("uid",sessionId, {
+        // setUser(sessionId,userObject);
+        const token=setUser(user);
+        // res.cookie("uid",sessionId, {
+        res.cookie("uid",token, {
             httpOnly: true,
             secure: false, // Set to true in production with HTTPS
             maxAge: 1000 * 60 * 60 * 24 // 24 hours
