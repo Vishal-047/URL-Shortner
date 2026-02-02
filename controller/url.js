@@ -5,11 +5,19 @@ async function handleURL(req,res){
     if(!body.url){
         return res.status(400).json({status:"Url is missing"})
     }
+    
+    // Ensure URL has a protocol
+    let urlToSave = body.url.trim();
+    if(!urlToSave.startsWith('http://') && !urlToSave.startsWith('https://')){
+        urlToSave = 'https://' + urlToSave;
+    }
+    
     const shortId=nanoid(8);
     await URL.create({
         shortId,
-        redirectedURL:body.url,
+        redirectedURL:urlToSave,
         visitHistory:[],
+        createdBy:req.user._id,
     });
     const allURLs=await URL.find({});
     return res.render("home",{
@@ -21,8 +29,12 @@ async function handleURL(req,res){
 async function analytics(req,res) {
     const shortId=req.params.shortId;
     const result=await URL.findOne({shortId});
-    return res.json({totalClicks:result.visitHistory.length,
-        analytics: result.visitHistory,
+    if(!result){
+        return res.status(404).json({error:"Short URL not found"});
+    }
+    return res.json({
+        totalClicks:result.visitHistory ? result.visitHistory.length : 0,
+        analytics: result.visitHistory || [],
     })
 }
 

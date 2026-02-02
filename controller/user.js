@@ -1,4 +1,7 @@
+
+const {v4:uuidv4}=require("uuid");
 const user=require('../model/user');
+const { setUser } = require("../service/auth");
 
 
 async function handleuser(req,res) {
@@ -34,7 +37,11 @@ async function handlelogin(req,res) {
         if(exuser.password !== password){
             return res.render("login",{error:"Incorrect password"});
         }
+        const sessionId=uuidv4();
+        setUser(sessionId,user);
+        res.cookie("uid",sessionId);
         return res.redirect("/");
+
     } catch (error) {
         console.error("Error in finding user:", error);
         return res.render("login",{error:"An error occurred. Please try again."});
