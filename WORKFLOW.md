@@ -132,8 +132,10 @@ Step 5: Save to Database
    - Creates a new URL document in the `urls` collection.
    - Associates the URL with the authenticated user via `createdBy: req.user._id`.
         ↓
-Step 6: Render Response
-   - Re-renders the home page (`home.ejs`), displaying the list of the user's URLs, including the newly created one.
+Step 6: Redirect Response
+   - Redirects to the home page (`/`) with a `generatedId` query parameter.
+   - The home page checks for this parameter and displays the new short URL if present.
+   - This prevents duplicate submissions on refresh (PRG Pattern).
 ```
 
 ### 6. Redirect to Original URL Workflow (Public)
@@ -185,6 +187,42 @@ Step 5: Database Query
 Step 6: Return JSON Response
    - Returns a JSON object with `totalClicks` and the `analytics` (visit history) array.
 ```
+
+### 8. Delete Short URL Workflow (Authenticated)
+
+**Endpoint: `POST /url/delete`**
+
+```
+Step 1: Authenticated client selects URLs and clicks "Delete Selected"
+   POST http://localhost:8001/url/delete
+   Body: { "shortIds": ["abc12345", "xyz67890"] }
+        ↓
+Step 2: Middleware authenticates user
+        ↓
+Step 3: Controller handles request (controller/url.js → handleDelete)
+   - Extracts `shortIds` from the request body.
+   - Deletes documents from `urls` collection where `shortId` is in the list AND `createdBy` matches the user.
+        ↓
+Step 4: Redirect Response
+   - Redirects back to the home page (`/`).
+```
+
+### 9. UI/UX Workflow
+
+**Client-Side Interactions**
+
+1.  **Authentication Views (`/login`, `/signup`)**
+    -   **Visuals**: Users are greeted with a **Gradient Aurora/Floating Bubble** animated background.
+    -   **Forms**: Login and Signup forms are presented in **Glassmorphism** cards (semi-transparent, blurred background).
+    -   **Feedback**: Errors (e.g., "Invalid password") are displayed in red text within the card.
+
+2.  **Dashboard View (`/`)**
+    -   **Header**: Displays user name and a "Logout" button.
+    -   **Generator**: A central card for pasting and shortening URLs.
+    -   **Link Table**: A responsive table displaying all created links.
+        -   **Selection**: Users can select individual rows or "Select All" via the header checkbox.
+        -   **Actions**: The "Delete Selected" button appears for bulk management.
+    -   **Responsiveness**: The layout adapts to mobile screens, stacking the header and table elements.
 
 ## Database Schema
 

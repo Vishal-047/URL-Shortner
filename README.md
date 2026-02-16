@@ -7,6 +7,10 @@ A simple and efficient URL shortener service built with Node.js, Express.js, and
 - 🔗 **URL Shortening**: Convert long URLs into short, manageable links.
 - 🔐 **User Authentication**: Secure user accounts with JWT-based authentication (signup, login, logout).
 - 👤 **User-Specific URLs**: Users can only view and manage their own shortened URLs.
+- 🎨 **Stunning UI/UX**:
+    -   **Glassmorphism Design**: Modern, semi-transparent card layout.
+    -   **Animated Backgrounds**: Dynamic floating bubble animation on auth pages.
+    -   **Responsive**: Optimized for all devices.
 - 📊 **Analytics**: Track total clicks and visit history for each shortened URL.
 - ⚡ **Fast & Lightweight**: Built with Express.js for optimal performance.
 - 🗄️ **MongoDB Integration**: Persistent storage with MongoDB.
@@ -67,7 +71,9 @@ The server will start on `http://localhost:8001`
 -   `GET /`: Home page. Displays the URL shortening form and a list of the user's shortened URLs. (Requires login)
 -   `GET /signup`: Renders the signup page.
 -   `GET /login`: Renders the login page.
+-   `GET /login`: Renders the login page.
 -   `GET /user/logout`: Logs the user out.
+-   `POST /url/delete`: Deletes selected short URLs.
 
 ## API Endpoints
 
@@ -85,7 +91,7 @@ Creates a new short URL from a long URL for the authenticated user.
 ```
 
 **Response:**
-Renders the home page with the newly created short URL.
+Redirects to the home page with `?generatedId=<shortId>`.
 
 ### Redirect to Original URL
 

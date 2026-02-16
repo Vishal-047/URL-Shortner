@@ -1,96 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
+    <title>Sign Up | URL Shortener</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-<style>
-    #signup-container{
-        margin: 20px auto;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        width: 300px;
-        height: 300px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f0f0;
-        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        padding: 20px;
-        margin: 20px auto;
-        width: 300px;
-        height: 300px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        font-family: Arial, sans-serif;
-        font-size: 16px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    #signup-container h1{
-        margin-bottom: 20px;
-        color: #0056b3;
-        font-size: 24px;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        font-family: Arial, sans-serif;
-        font-size: 35px;
-    }
-    #signup-container form{
-        margin-top: 20px;
-    }
-    #signup-container form label{
-        margin-bottom: 10px;
-    }
-    #signup-container form input{
-        margin-bottom: 10px;
-    }
-    #signup-container form button{
-        margin-top: 20px;
-        width: 50%;
-        border-radius: 5px;
-        background-color: #b3bbb7;
-    }
-    #signup-container form button:hover{
-        background-color: #0056b3;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;    transition: background-color 0.3s ease;
-        font-size: 16px;
-        font-weight: bold;
-    }
 
-</style>
 <body>
-    <div id="signup-container">
-        <h1>Signup</h1>
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="auth-container">
+        <h1>Create Account</h1>
         <form action="/user" method="post">
-            <label>Full Name:</label>
-            <input type="text" placeholder="Enter your full name" name="name"><br><br>
-            <label>Email:</label>
-            <input type="email" placeholder="example@email.com" name="email"><br><br>
-            <label>Password:</label>
-            <input type="password" placeholder="Enter your password" name="password"><br><br>
-            <button type="submit">Signup</button>
+            <input type="text" placeholder="Full Name" name="name" required>
+            <input type="email" placeholder="Email Address" name="email" required>
+            <input type="password" placeholder="Password" name="password" required>
+            <button type="submit">Sign Up</button>
+
             <% if (locals.error) { %>
-                <p style="color: red;"><%= error %></p>
-            <% } %>
-            <p>Already have an account? <a href="/login">Login</a></p>
+                <p style="color: var(--danger-color); font-size: 0.9em; margin-top: 0.5rem;">
+                    <%= error %>
+                </p>
+                <% } %>
+
+                    <p style="margin-top: 1.5rem; font-size: 0.9em;">
+                        Already have an account? <a href="/login">Login</a>
+                    </p>
         </form>
     </div>
 </body>
+
 </html>

@@ -4,69 +4,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home page</title>
+    <title>URL Shortener | Home</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
     <% if (locals.user) { %>
-        <div style="text-align: right; padding: 10px 20px; background-color: #f0f0f0; border-bottom: 1px solid #ddd;">
-            <span style="margin-right: 20px;"><strong>Name:</strong>
-                <%= user.name %>
-            </span>
-            <span><strong>Email:</strong>
-                <%= user.email %>
-            </span>
-            <a href="/user/logout" style="margin-left: 20px; color: #0056b3; text-decoration: none;">Logout</a>
-        </div>
-        <% } %>
-            <div style="text-align: center;">
-                <h1>URL SHORTNER</h1>
-                <form method="post" action="/url">
-                    <label>Enter the original url: </label>
-                    <input type="text" name="url" placeholder="https://examples.com">
-                    <button type="submit">Generate</button>
-                </form>
-                <% if (locals.id) { %>
-                    <p>The new generated URL is: http://localhost:8001/<%= id %>
-                    </p>
-                    <% } %>
+        <div class="home-container">
+            <div class="header-card">
+                <div class="user-info">
+                    <span>Welcome, <%= user.name %></span>
+                    <span style="opacity: 0.7; font-size: 0.9em;">
+                        <%= user.email %>
+                    </span>
+                </div>
+                <a href="/user/logout" class="logout-btn">Logout</a>
             </div>
-            <div style="margin: 20px auto; max-width: 800px;">
-                <% if (locals.urls && urls.length> 0) { %>
-                    <h2 style="text-align: center;">All Shortened URLs</h2>
-                    <table border="1" cellpadding="10" cellspacing="0"
-                        style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                        <thead>
-                            <tr style="background-color: #f0f0f0;">
-                                <th>S.No.</th>
-                                <th>ShortId</th>
-                                <th>Redirect</th>
-                                <th>Clicks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% urls.forEach((url,index)=> { %>
-                                <tr>
-                                    <td>
-                                        <%= index+1 %>
-                                    </td>
-                                    <td><a href="http://localhost:8001/<%= url.shortId %>"
-                                            target="_blank">http://localhost:8001/<%= url.shortId %></a></td>
-                                    <td>
-                                        <%= url.redirectedURL %>
-                                    </td>
-                                    <td>
-                                        <%= url.visitHistory ? url.visitHistory.length : 0 %>
-                                    </td>
-                                </tr>
-                                <% }) %>
-                        </tbody>
-                    </table>
-                    <% } else if (locals.urls && urls.length===0) { %>
-                        <p style="text-align: center; margin-top: 20px; color: #666;">No shortened URLs yet. Create one
-                            above!</p>
+            <% } %>
+
+                <div class="generator-card">
+                    <h1>Shorten Your Link</h1>
+                    <form method="post" action="/url" class="url-form">
+                        <input type="text" name="url" placeholder="Paste your long URL here (e.g., https://example.com)"
+                            required>
+                        <button type="submit">Shorten URL</button>
+                    </form>
+                    <% if (locals.id) { %>
+                        <div class="generated-link">
+                            <p>Your Short Link: <a href="http://localhost:8001/<%= id %>"
+                                    target="_blank">http://localhost:8001/<%= id %></a></p>
+                        </div>
                         <% } %>
-            </div>
+                </div>
+
+                <div class="table-card">
+                    <% if (locals.urls && urls.length> 0) { %>
+                        <h2>Your Dashboard</h2>
+                        <form method="POST" action="/url/delete">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectAll"> Select
+                                        </th>
+                                        <th>#</th>
+                                        <th>Short ID</th>
+                                        <th>Original Link</th>
+                                        <th>Clicks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% urls.forEach((url,index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" name="shortIds" value="<%= url.shortId %>">
+                                            </td>
+                                            <td>
+                                                <%= index+1 %>
+                                            </td>
+                                            <td><a href="http://localhost:8001/<%= url.shortId %>" target="_blank">
+                                                    <%= url.shortId %>
+                                                </a></td>
+                                            <td
+                                                style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                <a href="<%= url.redirectedURL %>" target="_blank"
+                                                    style="color: inherit; text-decoration: none;">
+                                                    <%= url.redirectedURL %>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <%= url.visitHistory ? url.visitHistory.length : 0 %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                            <div style="text-align: right;">
+                                <button type="submit" class="delete-btn">Delete Selected</button>
+                            </div>
+                        </form>
+                        <% } else if (locals.urls && urls.length===0) { %>
+                            <p style="text-align: center; color: #666; margin-top: 1rem;">No links found. Create your
+                                first one above!</p>
+                            <% } %>
+                </div>
+        </div>
+
+        <script>
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                selectAll.addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('input[name="shortIds"]');
+                    for (const checkbox of checkboxes) {
+                        checkbox.checked = this.checked;
+                    }
+                });
+
+                const checkboxes = document.querySelectorAll('input[name="shortIds"]');
+                for (const checkbox of checkboxes) {
+                    checkbox.addEventListener('change', function () {
+                        if (!this.checked) {
+                            selectAll.checked = false;
+                        } else {
+                            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                            selectAll.checked = allChecked;
+                        }
+                    });
+                }
+            }
+        </script>
 </body>
 
 </html>
