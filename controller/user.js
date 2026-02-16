@@ -1,14 +1,14 @@
 
-const {v4:uuidv4}=require("uuid");
-const user=require('../model/user');
+const { v4: uuidv4 } = require("uuid");
+const user = require('../model/user');
 const { setUser } = require("../service/auth");
 
 
-async function handleuser(req,res) {
+async function handleuser(req, res) {
     try {
-        const {name,email,password} = req.body;
-        if(!name || !email || !password){
-            return res.render("signup",{error:"All fields are required"});
+        const { name, email, password } = req.body;
+        if (!name || !email || !password) {
+            return res.render("signup", { error: "All fields are required" });
         }
         await user.create({
             name,
@@ -18,32 +18,32 @@ async function handleuser(req,res) {
         return res.redirect("/login");
     } catch (error) {
         console.error("Error creating user:", error);
-        if(error.code === 11000){
-            return res.render("signup",{error:"Email already exists. Please use a different email."});
+        if (error.code === 11000) {
+            return res.render("signup", { error: "Email already exists. Please use a different email." });
         }
-        return res.render("signup",{error:"An error occurred. Please try again."});
+        return res.render("signup", { error: "An error occurred. Please try again." });
     }
 }
-async function handlelogin(req,res) {
+async function handlelogin(req, res) {
     try {
-        const {email,password} = req.body;
-        if(!email || !password){
-            return res.render("login",{error:"Email and password are required"});
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.render("login", { error: "Email and password are required" });
         }
-        const exuser=await user.findOne({email});
-        if(!exuser){
-            return res.render("login",{error:"User not found. Please signup first."});
+        const exuser = await user.findOne({ email });
+        if (!exuser) {
+            return res.render("login", { error: "User not found. Please signup first." });
         }
-        if(exuser.password !== password){
-            return res.render("login",{error:"Incorrect password"});
+        if (exuser.password !== password) {
+            return res.render("login", { error: "Incorrect password" });
         }
         // const sessionId=uuidv4();  //no need 
         // Convert Mongoose document to plain object
         const userObject = exuser.toObject ? exuser.toObject() : exuser;
         // setUser(sessionId,userObject);
-        const token=setUser(user);
+        const token = setUser(exuser);
         // res.cookie("uid",sessionId, {
-        res.cookie("uid",token, {
+        res.cookie("uid", token, {
             httpOnly: true,
             secure: false, // Set to true in production with HTTPS
             maxAge: 1000 * 60 * 60 * 24 // 24 hours
@@ -52,14 +52,14 @@ async function handlelogin(req,res) {
 
     } catch (error) {
         console.error("Error in finding user:", error);
-        return res.render("login",{error:"An error occurred. Please try again."});
+        return res.render("login", { error: "An error occurred. Please try again." });
     }
-    
+
 }
 
-async function handlelogout(req,res) {
+async function handlelogout(req, res) {
     res.clearCookie("uid");
     return res.redirect("/login");
 }
 
-module.exports={handleuser,handlelogin,handlelogout};
+module.exports = { handleuser, handlelogin, handlelogout };

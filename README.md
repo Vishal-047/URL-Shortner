@@ -173,6 +173,15 @@ urlShortner/
     └── signup.ejs          # Signup page view
 ```
 
+## Troubleshooting
+
+### MongoDB Connection Error
+If you encounter `MongooseServerSelectionError: connect ECONNREFUSED 127.0.0.1:27017` or buffering timeouts:
+1. Ensure the MongoDB service is running on your machine.
+   - Windows: Check Services (`services.msc`) for `MongoDB Server`.
+   - Linux/Mac: Run `sudo systemctl status mongod` or `brew services list`.
+2. Verify the connection string in `index.js`. The default is `mongodb://127.0.0.1:27017/short-url`. Using `127.0.0.1` is often more reliable than `localhost`.
+
 ## Database Schema
 
 ### URL Schema

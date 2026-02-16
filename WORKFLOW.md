@@ -63,7 +63,7 @@ Step 5: Redirect to Login
    - On successful creation, redirects the user to the `/login` page.
 ```
 
-### 3. User Login Workflow
+### 3. User Login Workflow (JWT Authentication)
 
 **Endpoint: `POST /user/login`**
 
@@ -80,11 +80,11 @@ Step 3: Controller handles request (controller/user.js → handlelogin)
    - If the user is not found or the password doesn't match, it re-renders the login page with an error.
         ↓
 Step 4: Generate JWT (service/auth.js → setUser)
-   - Creates a JWT containing the user's `_id` and `email`.
-   - The token is signed with a secret key and has an expiration time.
+   - Creates a signed JWT containing the user's `_id` and `email`.
+   - The token is signed with a secret key.
         ↓
 Step 5: Set Cookie and Redirect
-   - Sets an HTTP-only cookie named `uid` with the generated JWT.
+   - Sets an HTTP-only cookie named `uid` containing the JWT.
    - Redirects the user to the home page (`/`).
 ```
 

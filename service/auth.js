@@ -6,7 +6,8 @@ function setUser(user){
     //below Stateless authentication.......
     const payload={
         _id:user._id,
-        user:user.email,
+        email:user.email,
+        name:user.name,
     };
     return jwt.sign(payload,secret,{expiresIn:"1h"});
 }

@@ -1,55 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home page</title>
 </head>
+
 <body>
     <% if (locals.user) { %>
         <div style="text-align: right; padding: 10px 20px; background-color: #f0f0f0; border-bottom: 1px solid #ddd;">
-            <span style="margin-right: 20px;"><strong>Name:</strong> <%= user.name %></span>
-            <span><strong>Email:</strong> <%= user.email %></span>
+            <span style="margin-right: 20px;"><strong>Name:</strong>
+                <%= user.name %>
+            </span>
+            <span><strong>Email:</strong>
+                <%= user.email %>
+            </span>
             <a href="/user/logout" style="margin-left: 20px; color: #0056b3; text-decoration: none;">Logout</a>
         </div>
-    <% } %>
-    <div style="text-align: center;">
-        <h1>URL SHORTNER</h1>
-        <form method="post" action="/url">
-            <label>Enter the original url: </label>
-            <input type="text" name="url" placeholder="https://examples.com">
-            <button type="submit">Generate</button>
-        </form>
-        <% if (locals.id) { %>
-                <p>The new generated URL is: http://localhost:8001/<%= id %></p>
         <% } %>
-    </div>
-    <div style="margin: 20px auto; max-width: 800px;">
-        <% if (locals.urls && urls.length > 0) { %>
-            <h2 style="text-align: center;">All Shortened URLs</h2>
-            <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                <thead>
-                    <tr style="background-color: #f0f0f0;">
-                        <th>S.No.</th>
-                        <th>ShortId</th>
-                        <th>Redirect</th>
-                        <th>Clicks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% urls.forEach((url,index) => { %>
-                        <tr>
-                            <td><%= index+1 %></td>
-                            <td><%= url.shortId %></td>
-                            <td><%= url.redirectedURL %></td>
-                            <td><%= url.visitHistory ? url.visitHistory.length : 0 %></td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        <% } else if (locals.urls && urls.length === 0) { %>
-            <p style="text-align: center; margin-top: 20px; color: #666;">No shortened URLs yet. Create one above!</p>
-        <% } %>
-    </div>
-    </body>
+            <div style="text-align: center;">
+                <h1>URL SHORTNER</h1>
+                <form method="post" action="/url">
+                    <label>Enter the original url: </label>
+                    <input type="text" name="url" placeholder="https://examples.com">
+                    <button type="submit">Generate</button>
+                </form>
+                <% if (locals.id) { %>
+                    <p>The new generated URL is: http://localhost:8001/<%= id %>
+                    </p>
+                    <% } %>
+            </div>
+            <div style="margin: 20px auto; max-width: 800px;">
+                <% if (locals.urls && urls.length> 0) { %>
+                    <h2 style="text-align: center;">All Shortened URLs</h2>
+                    <table border="1" cellpadding="10" cellspacing="0"
+                        style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background-color: #f0f0f0;">
+                                <th>S.No.</th>
+                                <th>ShortId</th>
+                                <th>Redirect</th>
+                                <th>Clicks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% urls.forEach((url,index)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index+1 %>
+                                    </td>
+                                    <td><a href="http://localhost:8001/<%= url.shortId %>"
+                                            target="_blank">http://localhost:8001/<%= url.shortId %></a></td>
+                                    <td>
+                                        <%= url.redirectedURL %>
+                                    </td>
+                                    <td>
+                                        <%= url.visitHistory ? url.visitHistory.length : 0 %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                    <% } else if (locals.urls && urls.length===0) { %>
+                        <p style="text-align: center; margin-top: 20px; color: #666;">No shortened URLs yet. Create one
+                            above!</p>
+                        <% } %>
+            </div>
+</body>
+
 </html>
