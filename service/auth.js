@@ -9,7 +9,7 @@ function setUser(user){
         email:user.email,
         name:user.name,
     };
-    return jwt.sign(payload,secret,{expiresIn:"1h"});
+    return jwt.sign(payload, secret, { expiresIn: "24h" }); // was 1h
 }
 
 // function getUser(id){

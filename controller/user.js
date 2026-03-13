@@ -45,9 +45,10 @@ async function handlelogin(req, res) {
         // res.cookie("uid",sessionId, {
         res.cookie("uid", token, {
             httpOnly: true,
-            secure: false, // Set to true in production with HTTPS
-            maxAge: 1000 * 60 * 60 * 24 // 24 hours
-        });
+            secure: true,          // was false — this is the bug
+            sameSite: "lax",       // add this too
+            maxAge: 1000 * 60 * 60 * 24
+        }); 
         return res.redirect("/");
 
     } catch (error) {
