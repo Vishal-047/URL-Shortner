@@ -16,7 +16,7 @@ async function handleURL(req, res) {
     const existingURL = await URL.findOne({ redirectedURL: urlToSave, createdBy: req.user._id });
 
     if (existingURL) {
-        return res.redirect(`/?generatedId=${existingURL.shortId}`);
+        return res.redirect(302, `/?generatedId=${existingURL.shortId}`);
     }
 
     const shortId = nanoid(8);
@@ -71,7 +71,7 @@ async function handleDelete(req, res) {
         } else {
             console.log("No IDs provided for deletion");
         }
-        return res.redirect('/');
+        return res.redirect(302, '/');
     } catch (error) {
         console.error("Error deleting URLs:", error);
         return res.status(500).send("Internal Server Error: " + error.message);
