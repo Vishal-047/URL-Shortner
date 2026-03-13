@@ -51,8 +51,8 @@
                     </form>
                     <% if (locals.id) { %>
                         <div class="generated-link">
-                            <p>Your Short Link: <a href="http://localhost:8001/<%= id %>"
-                                    target="_blank">http://localhost:8001/<%= id %></a></p>
+                            <p>Success! Your short ID is <strong><%= id %></strong>. <a href="/<%= id %>"
+                                    target="_blank">Click here to test it</a></p>
                         </div>
                         <% } %>
                 </div>
@@ -82,7 +82,7 @@
                                             <td>
                                                 <%= index+1 %>
                                             </td>
-                                            <td><a href="http://localhost:8001/<%= url.shortId %>" target="_blank">
+                                            <td><a href="/<%= url.shortId %>" target="_blank">
                                                     <%= url.shortId %>
                                                 </a></td>
                                             <td
