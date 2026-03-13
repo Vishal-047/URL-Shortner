@@ -61,25 +61,25 @@ const MONGO_URI = process.env.MONGO_URI || process.env.MONGO_URI || 'mongodb://1
 
 let isConnected = false;
 
-// We export an async function as the Vercel handler
-module.exports = async (req, res) => {
-    // Only connect if we don't already have an active connection
+// Connect to MongoDB asynchronously before exporting for Vercel
+const init = async () => {
     if (!isConnected) {
         try {
             await connection(MONGO_URI, {
-                serverSelectionTimeoutMS: 5000 // Error out quickly instead of 10s buffers
+                serverSelectionTimeoutMS: 5000 
             });
             isConnected = true;
             console.log("MongoDB connected");
         } catch (err) {
             console.error("MongoDB connection Error:", err);
-            return res.status(500).json({ error: "Failed to connect to database" });
         }
     }
-    
-    // Once connected, pass the request to Express
-    return app(req, res);
 };
+
+// Start initialization immediately
+init();
+
+module.exports = app;
 
 // Keep local development working
 if (process.env.NODE_ENV !== 'production') {
