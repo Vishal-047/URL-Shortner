@@ -49,7 +49,7 @@ async function handlelogin(req, res) {
             sameSite: "lax",       // add this too
             maxAge: 1000 * 60 * 60 * 24
         }); 
-        return res.redirect("/");
+        return res.redirect(302, "/");
 
     } catch (error) {
         console.error("Error in finding user:", error);
