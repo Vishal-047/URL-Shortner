@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const routeURL = require("./routes/url");
 const connection = require("./connection")
@@ -14,10 +15,10 @@ const staticRoute = require("./routes/staticRouter");
 
 
 app.set("view engine", "ejs");
-app.set("views", path.resolve("./views"));
+app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieparser());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, "public")));
 
 
 
@@ -56,9 +57,18 @@ app.get('/:shortId', async (req, res) => {
     res.redirect(redirectUrl);
 })
 
-connection('mongodb://127.0.0.1:27017/short-url')
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/short-url';
+
+connection(MONGO_URI)
     .then(() => {
         console.log("MongoDB connected");
-        app.listen(PORT, () => console.log(`Server started on Port: ${PORT}`));
     })
     .catch(err => console.log("Error occured: ", err));
+
+// Start server if safely outside Vercel's serverless production environment
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => console.log(`Server started on Port: ${PORT}`));
+}
+
+// Export the Express app as a serverless function handler for Vercel
+module.exports = app;

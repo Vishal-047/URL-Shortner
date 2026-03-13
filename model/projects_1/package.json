@@ -1,0 +1,15 @@
+{
+  "name": "restapi",
+  "version": "1.0.0",
+  "main": "restAPI.js",
+  "scripts": {
+    "start": "nodemon restAPI.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.11"
+  }
+}

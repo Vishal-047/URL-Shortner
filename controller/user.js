@@ -62,4 +62,24 @@ async function handlelogout(req, res) {
     return res.redirect("/login");
 }
 
-module.exports = { handleuser, handlelogin, handlelogout };
+async function handleDeleteAccount(req, res) {
+    try {
+        const userId = req.user._id;
+        const URL = require('../model/url');
+
+        // Delete all URLs created by this user
+        await URL.deleteMany({ createdBy: userId });
+
+        // Delete the user account
+        await user.findByIdAndDelete(userId);
+
+        // Clear auth cookie and redirect to login
+        res.clearCookie("uid");
+        return res.redirect("/login");
+    } catch (error) {
+        console.error("Error deleting account:", error);
+        return res.redirect("/");
+    }
+}
+
+module.exports = { handleuser, handlelogin, handlelogout, handleDeleteAccount };
