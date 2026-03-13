@@ -1,0 +1,56 @@
+<canvas id="bg-canvas" style="position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; width: 100vw; height: 100vh;"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const canvas = document.getElementById('bg-canvas');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.style.background = '#1a1a2e';
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.z = 8;
+
+const colors = [0x6c63ff, 0x48cae4, 0xa29bfe, 0x74b9ff, 0xfd79a8];
+const meshes = [];
+const geos = [
+  new THREE.OctahedronGeometry(0.5),
+  new THREE.TetrahedronGeometry(0.5),
+  new THREE.IcosahedronGeometry(0.4),
+  new THREE.BoxGeometry(0.6,0.6,0.6),
+];
+
+for(let i=0;i<28;i++){
+  const geo = geos[Math.floor(Math.random()*geos.length)];
+  const mat = new THREE.MeshPhongMaterial({
+    color: colors[Math.floor(Math.random()*colors.length)],
+    transparent:true, opacity:Math.random()*0.4+0.15,
+    wireframe:Math.random()>0.5
+  });
+  const mesh = new THREE.Mesh(geo,mat);
+  mesh.position.set((Math.random()-0.5)*18,(Math.random()-0.5)*10,(Math.random()-0.5)*6);
+  mesh.userData = {rx:(Math.random()-0.5)*0.008,ry:(Math.random()-0.5)*0.008,
+    initY:mesh.position.y,amp:Math.random()*0.3+0.2,phase:Math.random()*Math.PI*2};
+  scene.add(mesh); meshes.push(mesh);
+}
+
+scene.add(new THREE.AmbientLight(0xffffff,0.4));
+const d1=new THREE.DirectionalLight(0x6c63ff,1.5); d1.position.set(5,5,5); scene.add(d1);
+const d2=new THREE.DirectionalLight(0x48cae4,1); d2.position.set(-5,-3,2); scene.add(d2);
+
+let t=0;
+(function animate(){
+  requestAnimationFrame(animate); t+=0.01;
+  meshes.forEach(m=>{
+    m.rotation.x+=m.userData.rx; m.rotation.y+=m.userData.ry;
+    m.position.y=m.userData.initY+Math.sin(t+m.userData.phase)*m.userData.amp;
+  });
+  renderer.render(scene,camera);
+})();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
