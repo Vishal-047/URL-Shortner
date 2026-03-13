@@ -79,7 +79,7 @@ async function handleDeleteAccount(req, res) {
         return res.redirect("/login");
     } catch (error) {
         console.error("Error deleting account:", error);
-        return res.redirect("/");
+        return res.redirect(302,"/");
     }
 }
 
