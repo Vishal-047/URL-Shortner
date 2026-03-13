@@ -15,7 +15,7 @@ async function handleuser(req, res) {
             email,
             password
         });
-        return res.redirect("/login");
+        return res.redirect(302, "/login");
     } catch (error) {
         console.error("Error creating user:", error);
         if (error.code === 11000) {
@@ -60,7 +60,7 @@ async function handlelogin(req, res) {
 
 async function handlelogout(req, res) {
     res.clearCookie("uid");
-    return res.redirect("/login");
+    return res.redirect(302,"/login");
 }
 
 async function handleDeleteAccount(req, res) {
@@ -76,7 +76,7 @@ async function handleDeleteAccount(req, res) {
 
         // Clear auth cookie and redirect to login
         res.clearCookie("uid");
-        return res.redirect("/login");
+        return res.redirect(302,"/login");
     } catch (error) {
         console.error("Error deleting account:", error);
         return res.redirect(302,"/");
