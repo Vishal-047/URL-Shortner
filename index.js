@@ -59,16 +59,36 @@ app.get('/:shortId', async (req, res) => {
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/short-url';
 
-connection(MONGO_URI)
-    .then(() => {
-        console.log("MongoDB connected");
-    })
-    .catch(err => console.log("Error occured: ", err));
+let isConnected = false;
 
-// Start server if safely outside Vercel's serverless production environment
+// We export an async function as the Vercel handler
+module.exports = async (req, res) => {
+    // Only connect if we don't already have an active connection
+    if (!isConnected) {
+        try {
+            await connection(MONGO_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                serverSelectionTimeoutMS: 5000 // Error out quickly instead of 10s buffers
+            });
+            isConnected = true;
+            console.log("MongoDB connected");
+        } catch (err) {
+            console.error("MongoDB connection Error:", err);
+            return res.status(500).json({ error: "Failed to connect to database" });
+        }
+    }
+    
+    // Once connected, pass the request to Express
+    return app(req, res);
+};
+
+// Keep local development working
 if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => console.log(`Server started on Port: ${PORT}`));
+    connection(MONGO_URI)
+        .then(() => {
+            console.log("Local MongoDB connected");
+            app.listen(PORT, () => console.log(`Server started on Port: ${PORT}`));
+        })
+        .catch(err => console.log("Local MongoDB Error: ", err));
 }
-
-// Export the Express app as a serverless function handler for Vercel
-module.exports = app;
