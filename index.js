@@ -67,8 +67,6 @@ module.exports = async (req, res) => {
     if (!isConnected) {
         try {
             await connection(MONGO_URI, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
                 serverSelectionTimeoutMS: 5000 // Error out quickly instead of 10s buffers
             });
             isConnected = true;
