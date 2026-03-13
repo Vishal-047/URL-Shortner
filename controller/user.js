@@ -2,6 +2,7 @@
 const { v4: uuidv4 } = require("uuid");
 const user = require('../model/user');
 const { setUser } = require("../service/auth");
+const bcrypt = require("bcrypt");
 
 
 async function handleuser(req, res) {
@@ -10,10 +11,11 @@ async function handleuser(req, res) {
         if (!name || !email || !password) {
             return res.render("signup", { error: "All fields are required" });
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
         await user.create({
             name,
             email,
-            password
+            password: hashedPassword
         });
         return res.redirect(302, "/");
     } catch (error) {
@@ -34,7 +36,8 @@ async function handlelogin(req, res) {
         if (!exuser) {
             return res.render("login", { error: "User not found. Please signup first." });
         }
-        if (exuser.password !== password) {
+        const isMatch = await bcrypt.compare(password, exuser.password);
+        if (!isMatch) {
             return res.render("login", { error: "Incorrect password" });
         }
         // const sessionId=uuidv4();  //no need 
