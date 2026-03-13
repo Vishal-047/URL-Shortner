@@ -15,7 +15,7 @@ async function handleuser(req, res) {
             email,
             password
         });
-        return res.redirect(302, "/login");
+        return res.redirect(302, "/");
     } catch (error) {
         console.error("Error creating user:", error);
         if (error.code === 11000) {
