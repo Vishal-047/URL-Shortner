@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#48cae4"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="#1a1a2e"/>
+  <!-- Left link -->
+  <rect x="4" y="12" width="12" height="8" rx="4" fill="none" stroke="url(#g)" stroke-width="2.5"/>
+  <!-- Right link -->
+  <rect x="16" y="12" width="12" height="8" rx="4" fill="none" stroke="url(#g)" stroke-width="2.5"/>
+  <!-- Chain overlap fill to create interlocked look -->
+  <rect x="14" y="14" width="4" height="4" fill="#1a1a2e"/>
+</svg>
