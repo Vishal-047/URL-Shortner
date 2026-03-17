@@ -59,6 +59,17 @@ mongod
 
 ## Usage
 
+## Redis Cache (Optional)
+
+To enable Redis caching for short URL redirects, set these environment variables:
+
+```env
+REDIS_URL=redis://127.0.0.1:6379
+REDIS_CACHE_TTL_SECONDS=3600
+```
+
+If `REDIS_URL` is not set, the app runs normally without cache.
+
 1. Start the server:
 ```bash
 npm start

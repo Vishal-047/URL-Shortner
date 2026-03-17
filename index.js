@@ -5,10 +5,18 @@ const connection = require("./connection")
 const app = express();
 const cookieparser = require("cookie-parser")
 const { restrictUser, checkAuth } = require("./middleware/auth");
+const { connectRedis, getCachedRedirectUrl, setCachedRedirectUrl } = require("./service/cache");
 const path = require("path");
 const PORT = 8001;
 const URL = require("./model/url");
 app.use(express.json());
+function ensureProtocol(url) {
+    if (!url) return url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return `https://${url}`;
+    }
+    return url;
+}
 
 const userRoute = require('./routes/user');
 const staticRoute = require("./routes/staticRouter");
@@ -35,26 +43,33 @@ app.get('/:shortId', async (req, res) => {
         return res.status(404).send("Page not found");
     }
 
-    const entry = await URL.findOneAndUpdate({
-        shortId: shortId,
-    }, {
-        $inc: { TotalClicks: 1 },
-        $push: {
-            visitHistory: { timestamp: Date.now() },
-        },
-    });
+    const cachedRedirectUrl = await getCachedRedirectUrl(shortId);
+    if (cachedRedirectUrl) {
+        URL.updateOne(
+            { shortId },
+            {
+                $inc: { TotalClicks: 1 },
+                $push: { visitHistory: { timestamp: Date.now() } },
+            }
+        ).catch((err) => console.error("Click tracking update failed:", err.message));
+        return res.redirect(ensureProtocol(cachedRedirectUrl));
+    }
+
+    const entry = await URL.findOneAndUpdate(
+        { shortId },
+        {
+            $inc: { TotalClicks: 1 },
+            $push: { visitHistory: { timestamp: Date.now() } },
+        }
+    );
 
     if (!entry) {
         return res.status(404).send("Short URL not found");
     }
 
-    // Ensure the redirect URL has a protocol
-    let redirectUrl = entry.redirectedURL;
-    if (!redirectUrl.startsWith('http://') && !redirectUrl.startsWith('https://')) {
-        redirectUrl = 'https://' + redirectUrl;
-    }
-
-    res.redirect(redirectUrl);
+    const redirectUrl = ensureProtocol(entry.redirectedURL);
+    await setCachedRedirectUrl(shortId, redirectUrl);
+    return res.redirect(redirectUrl);
 })
 
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/short-url';
@@ -69,6 +84,7 @@ module.exports = async (req, res) => {
             await connection(MONGO_URI, {
                 serverSelectionTimeoutMS: 5000 
             });
+            await connectRedis();
             isConnected = true;
             console.log("MongoDB connected");
         } catch (err) {
@@ -85,6 +101,7 @@ module.exports = async (req, res) => {
 if (process.env.NODE_ENV !== 'production') {
     connection(MONGO_URI)
         .then(() => {
+            connectRedis().catch((err) => console.error("Redis connection Error:", err.message));
             console.log("Local MongoDB connected");
             app.listen(PORT, () => console.log(`Server started on Port: ${PORT}`));
         })
