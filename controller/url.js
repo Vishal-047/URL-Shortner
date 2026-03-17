@@ -1,5 +1,6 @@
 const { nanoid } = require("nanoid")
 const URL = require("../model/url")
+const { setCachedRedirectUrl, deleteCachedRedirectUrl } = require("../service/cache");
 async function handleURL(req, res) {
     const body = req.body;
     if (!body.url) {
@@ -26,6 +27,7 @@ async function handleURL(req, res) {
         visitHistory: [],
         createdBy: req.user._id,
     });
+    await setCachedRedirectUrl(shortId, urlToSave);
     // Fetch only URLs created by this user
     const allURLs = await URL.find({ createdBy: req.user._id });
     return res.render("home", {
@@ -67,6 +69,7 @@ async function handleDelete(req, res) {
 
             console.log("IDs to delete:", idsToDelete);
             const result = await URL.deleteMany({ shortId: { $in: idsToDelete }, createdBy: req.user._id });
+            await Promise.all(idsToDelete.map((shortId) => deleteCachedRedirectUrl(shortId)));
             console.log("Delete result:", result);
         } else {
             console.log("No IDs provided for deletion");
